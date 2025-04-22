@@ -4,6 +4,10 @@ FROM node:20-alpine AS builder
 # 设置工作目录
 WORKDIR /app
 
+# 添加构建参数
+ARG NEXT_PUBLIC_API_BASE_URL
+ENV NEXT_PUBLIC_API_BASE_URL=${NEXT_PUBLIC_API_BASE_URL}
+
 # 安装 pnpm
 RUN corepack enable && corepack prepare pnpm@latest --activate
 
@@ -24,12 +28,13 @@ FROM node:20-alpine AS runner
 
 WORKDIR /app
 
-# 安装 pnpm
-RUN corepack enable && corepack prepare pnpm@latest --activate
-
-# 设置环境变量
+# 添加运行时环境变量
 ENV NODE_ENV production
 ENV NEXT_TELEMETRY_DISABLED 1
+ENV NEXT_PUBLIC_API_BASE_URL=${NEXT_PUBLIC_API_BASE_URL}
+
+# 安装 pnpm
+RUN corepack enable && corepack prepare pnpm@latest --activate
 
 # 创建系统用户
 RUN addgroup --system --gid 1001 nodejs && \
