@@ -60,6 +60,7 @@ jobs:
           host: ${{ secrets.VPS_HOST }}
           username: ${{ secrets.VPS_USERNAME }}
           key: ${{ secrets.VPS_SSH_KEY }}
+          port: ${{ secrets.SSH_PORT }}
           script: |
             # 创建部署目录（如果不存在）
             mkdir -p ${{ env.DEPLOY_PATH }}
@@ -73,6 +74,7 @@ jobs:
           host: ${{ secrets.VPS_HOST }}
           username: ${{ secrets.VPS_USERNAME }}
           key: ${{ secrets.VPS_SSH_KEY }}
+          port: ${{ secrets.SSH_PORT }}
           source: "deploy.tar.gz"
           target: ${{ env.DEPLOY_PATH }}
 
@@ -82,6 +84,7 @@ jobs:
           host: ${{ secrets.VPS_HOST }}
           username: ${{ secrets.VPS_USERNAME }}
           key: ${{ secrets.VPS_SSH_KEY }}
+          port: ${{ secrets.SSH_PORT }}
           envs: NEXT_PUBLIC_API_BASE_URL
           script: |
             cd ${{ env.DEPLOY_PATH }}
