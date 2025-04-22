@@ -46,8 +46,8 @@ async function getStories(
     return { stories };
   } catch (error) {
     console.error("Error fetching stories:", error);
-    const errorMessage =
-      error instanceof Error ? error.message : "An unknown error occurred";
+    // const errorMessage =
+    //   error instanceof Error ? error.message : "An unknown error occurred";
     return { stories: [] };
   }
 }
