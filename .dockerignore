@@ -1,0 +1,21 @@
+# 依赖
+node_modules
+.pnpm-store
+
+# 构建输出
+.next
+out
+
+# 开发工具和配置
+.git
+.github
+.vscode
+.idea
+*.log
+.env*
+.eslintrc*
+.prettier*
+
+# 系统文件
+.DS_Store
+Thumbs.db
