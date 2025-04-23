@@ -12,8 +12,8 @@ const notoSansSC = Noto_Sans_SC({
 });
 
 export const metadata: Metadata = {
-  title: "每日恐怖小说",
-  description: "每天一篇由 AI 生成的短篇恐怖小说",
+  title: "每日恐怖故事",
+  description: "每天一篇由 AI 生成的短篇恐怖故事",
 };
 
 export default function RootLayout({
@@ -30,7 +30,7 @@ export default function RootLayout({
               href="/"
               className="text-xl text-stone-800 hover:text-stone-600 transition-colors"
             >
-              每日恐怖小说
+              每日恐怖故事
             </Link>
             <Link
               href="/stories"
