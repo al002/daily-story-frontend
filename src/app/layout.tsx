@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Noto_Sans_SC } from "next/font/google";
 import "./globals.css";
 import Link from "next/link";
+import Disclaimer from "@/components/Disclaimer";
 
 const notoSansSC = Noto_Sans_SC({
   subsets: ["latin", "cyrillic"],
@@ -21,8 +22,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="zh-CN" className={`${notoSansSC.variable} font-sans`}>
-      <body className="bg-background text-foreground min-h-screen antialiased selection:bg-accent selection:text-white">
+    <html lang="zh-CN" className={`${notoSansSC.variable} font-sans h-full`}>
+      <body className="bg-background text-foreground min-h-full flex flex-col antialiased selection:bg-accent selection:text-white">
         <div className="container mx-auto px-4 pt-6 pb-2">
           <div className="flex justify-between items-center">
             <Link
@@ -40,9 +41,13 @@ export default function RootLayout({
           </div>
         </div>
 
-        <main className="container mx-auto px-4 py-6">
+        <main className="container mx-auto px-4 py-6 flex-1">
           {children}
         </main>
+
+        <footer>
+          <Disclaimer />
+        </footer>
       </body>
     </html>
   );
