@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Noto_Sans_SC } from "next/font/google";
+import Script from "next/script";
 import "./globals.css";
 import Link from "next/link";
 import Disclaimer from "@/components/Disclaimer";
@@ -10,6 +11,8 @@ const notoSansSC = Noto_Sans_SC({
   display: "swap",
   variable: "--font-noto-sans-sc",
 });
+
+const GA_MEASUREMENT_ID = 'G-C7BZCD0EHE';
 
 export const metadata: Metadata = {
   title: "每日恐怖故事",
@@ -23,6 +26,25 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="zh-CN" className={`${notoSansSC.variable} font-sans h-full`}>
+      <head>
+        {/* Google Analytics */}
+        <Script
+          src={`https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`}
+          strategy="afterInteractive"
+        />
+        <Script
+          id="google-analytics"
+          strategy="afterInteractive"
+          dangerouslySetInnerHTML={{
+            __html: `
+              window.dataLayer = window.dataLayer || [];
+              function gtag(){dataLayer.push(arguments);}
+              gtag('js', new Date());
+              gtag('config', '${GA_MEASUREMENT_ID}');
+            `,
+          }}
+        />
+      </head>
       <body className="bg-background text-foreground min-h-full flex flex-col antialiased selection:bg-accent selection:text-white">
         <div className="container mx-auto px-4 pt-6 pb-2">
           <div className="flex justify-between items-center">
@@ -41,9 +63,7 @@ export default function RootLayout({
           </div>
         </div>
 
-        <main className="container mx-auto px-4 py-6 flex-1">
-          {children}
-        </main>
+        <main className="container mx-auto px-4 py-6 flex-1">{children}</main>
 
         <footer>
           <Disclaimer />
