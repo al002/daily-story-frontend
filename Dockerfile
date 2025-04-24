@@ -54,9 +54,8 @@ USER nextjs
 # 暴露端口
 EXPOSE 3000
 
-# 设置环境变量
+# 设置端口环境变量
 ENV PORT 3000
-ENV HOSTNAME "0.0.0.0"
 
 # 启动命令
 CMD ["node", "server.js"]
