@@ -74,6 +74,7 @@ jobs:
             
             docker run -d \
               --name daily-story-frontend \
+              --network storynet \
               --restart unless-stopped \
               -p 3000:3000 \
               -e NEXT_PUBLIC_API_BASE_URL="${NEXT_PUBLIC_API_BASE_URL}" \
