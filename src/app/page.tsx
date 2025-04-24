@@ -4,32 +4,40 @@ import { Story, ApiError } from "@/lib/types"; // 引入类型定义
 async function getTodaysStory(): Promise<Story | null> {
   const apiUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
   if (!apiUrl) {
-    console.error("API Base URL not configured.");
+    console.error("[Server] API Base URL not configured.");
     return null;
   }
 
+  const url = `${apiUrl}/story`;
+  console.log('[Server] Fetching story from:', url);
+
   try {
-    const res = await fetch(`${apiUrl}/story`, {
+    const res = await fetch(url, {
       next: { revalidate: 3600 },
     });
+
+    console.log('[Server] Response status:', res.status);
 
     if (!res.ok) {
       let errorData: ApiError | null = null;
       try {
         errorData = await res.json();
-      } catch {}
+      } catch (e) {
+        console.error('[Server] Failed to parse error response:', e);
+      }
 
       console.error(
-        `Failed to fetch today's story: ${res.status} ${res.statusText}`,
+        `[Server] Failed to fetch today's story: ${res.status} ${res.statusText}`,
         errorData,
       );
       return null;
     }
 
     const story: Story = await res.json();
+    console.log('[Server] Successfully fetched story:', story.id);
     return story;
   } catch (error) {
-    console.error("Error fetching today's story:", error);
+    console.error("[Server] Error fetching today's story:", error);
     return null;
   }
 }
