@@ -13,7 +13,7 @@ async function getTodaysStory(): Promise<Story | null> {
 
   try {
     const res = await fetch(url, {
-      next: { revalidate: 3600 },
+      cache: "no-store",
     });
 
     console.log('[Server] Response status:', res.status);
