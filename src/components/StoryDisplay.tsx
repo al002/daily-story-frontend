@@ -137,7 +137,7 @@ export default function StoryDisplay({
         </p>
       </header>
 
-      <div className="prose prose-stone max-w-none lg:prose-lg xl:prose-xl prose-p:leading-relaxed prose-p:text-justify prose-p:tracking-wide prose-headings:font-medium">
+      <div className="prose prose-stone max-w-none lg:prose-lg xl:prose-xl prose-p:leading-relaxed prose-p:text-justify prose-p:tracking-wide prose-headings:font-medium [&>p]:mb-4">
         {paragraphs.map((paragraph, index) => (
           <p
             key={index}
