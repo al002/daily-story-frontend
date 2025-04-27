@@ -23,29 +23,39 @@ export default function StoryDisplay({
     }
   };
 
+  // 过滤掉空段落并处理缩进
+  const paragraphs = story.content
+    .split("\n")
+    .filter(para => para.trim() !== "");
+
   return (
     <article className="bg-stone-50/50 rounded-lg overflow-hidden p-6 md:p-8 lg:p-10">
       <header className="mb-8 border-b border-stone-200 pb-4">
         <h1
-          className={`text-2xl md:text-3xl font-medium text-stone-900 ${isHomepage ? "text-center" : ""}`}
+          className={`text-2xl md:text-3xl font-medium text-stone-900 ${
+            isHomepage ? "text-center" : ""
+          }`}
         >
           {story.title}
         </h1>
         <p
-          className={`text-sm text-stone-500 mt-3 ${isHomepage ? "text-center" : ""}`}
+          className={`text-sm text-stone-500 mt-3 ${
+            isHomepage ? "text-center" : ""
+          }`}
         >
           {formattedDate(story.date)}
         </p>
       </header>
 
-      {/* 使用 prose 类优化长文本阅读体验 (来自 @tailwindcss/typography 插件) */}
       <div className="prose prose-stone max-w-none lg:prose-lg xl:prose-xl prose-p:leading-relaxed prose-p:text-justify prose-p:tracking-wide prose-headings:font-medium">
-        {/* 将换行符 \n 转换为 <br /> 或 <p> */}
-        {story.content.split("\n").map(
-          (paragraph, index) =>
-            // 过滤掉空段落
-            paragraph.trim() !== "" && <p key={index}>{paragraph}</p>,
-        )}
+        {paragraphs.map((paragraph, index) => (
+          <p
+            key={index}
+            className={index === 0 ? "indent-[2em]" : ""}
+          >
+            {paragraph}
+          </p>
+        ))}
       </div>
 
       {/* 在文章末尾添加一个标记元素，用于后续实现无限滚动检测 */}
