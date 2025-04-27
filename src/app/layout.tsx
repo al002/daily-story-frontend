@@ -9,6 +9,7 @@ const notoSansSC = Noto_Sans_SC({
   subsets: ["latin", "cyrillic"],
   weight: ["300", "400", "500", "700"],
   display: "swap",
+  adjustFontFallback: false,
   variable: "--font-noto-sans-sc",
 });
 

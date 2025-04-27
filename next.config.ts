@@ -7,10 +7,6 @@ const nextConfig: NextConfig = {
       fullUrl: true,
     },
   },
-  // 强制将所有日志输出到 stdout/stderr
-  onError: (err: unknown) => {
-    console.error('Next.js Error:', err);
-  },
 };
 
 export default nextConfig;
