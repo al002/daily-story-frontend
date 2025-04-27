@@ -66,26 +66,18 @@ export async function generateStoryImage(
       const nextChar = characters[i + 1] || '';
       const charWidth = measureText(char);
       
-      // 处理标点符号的特殊情况
-      if (NO_BREAK_BEFORE.test(nextChar) || NO_BREAK_AFTER.test(char)) {
-        currentLine += char;
-        currentWidth += charWidth;
-        continue;
-      }
-      
       // 检查是否需要换行
       if (currentWidth + charWidth > maxWidth - margin.right) {
-        // 如果当前行以标点符号结尾，尽量将标点符号放在下一行开头
-        if (CHINESE_PUNCTUATION.test(currentLine[currentLine.length - 1])) {
-          const lastChar = currentLine[currentLine.length - 1];
-          currentLine = currentLine.slice(0, -1);
+        // 当前字符是标点符号时，应该放在当前行
+        if (CHINESE_PUNCTUATION.test(char)) {
+          currentLine += char;
           lines.push(currentLine);
-          currentLine = lastChar + char;
-          currentWidth = measureText(currentLine);
+          currentLine = '';
+          currentWidth = firstLineIndent;
         } else {
           lines.push(currentLine);
           currentLine = char;
-          currentWidth = charWidth;
+          currentWidth = charWidth + firstLineIndent;
         }
       } else {
         currentLine += char;
@@ -98,6 +90,54 @@ export async function generateStoryImage(
     }
     
     return lines;
+  }
+
+  // 绘制文本时实现两端对齐
+  function drawJustifiedText(
+    line: string,
+    x: number,
+    y: number,
+    maxWidth: number, // Still needed for effectiveMaxWidth calculation
+    isFirstLineOfFirstParagraph: boolean = false,
+    isLastLineOfParagraph: boolean = false
+  ) {
+    // fontSize parameter removed as it's not directly used; font is set on ctx before calling.
+    const chars = Array.from(line);
+    
+    // Calculate total width and effective max width
+    const totalWidth = measureText(line);
+    const effectiveMaxWidth = isFirstLineOfFirstParagraph 
+      ? canvas.width - margin.left * 2 - margin.right // Adjusted for double indent
+      : canvas.width - margin.left - margin.right;
+
+    // If it's the last line and doesn't fill the width, draw left-aligned
+    if (isLastLineOfParagraph && totalWidth < effectiveMaxWidth) {
+      ctx.fillText(line, x, y);
+      return;
+    }
+
+    // Existing justification logic for other lines or full last lines
+    if (chars.length <= 1) {
+      ctx.fillText(line, x, y);
+      return;
+    }
+
+    // Calculate extra space needed for justification
+    const extraSpace = effectiveMaxWidth - totalWidth;
+    
+    // Calculate space between characters for justification
+    // Avoid division by zero if there's only one character (though handled above)
+    const spaceBetweenChars = chars.length > 1 ? extraSpace / (chars.length - 1) : 0;
+    
+    // 绘制每个字符
+    let currentX = x;
+    chars.forEach((char, index) => {
+      ctx.fillText(char, currentX, y);
+      // 最后一个字符不需要添加间距
+      if (index < chars.length - 1) {
+        currentX += measureText(char) + spaceBetweenChars;
+      }
+    });
   }
 
   // 计算标题文本
@@ -173,28 +213,56 @@ export async function generateStoryImage(
   ctx.fillStyle = '#292524';
   
   let contentY = margin.top + titleHeight + margin.titleBottom;
-  let currentParagraphIndex = 0;
+  let currentParagraphIndex = -1; // Start at -1 to trigger initial calculation
   let linesInCurrentParagraph = 0;
+  let currentParagraphWrappedLines: string[] = [];
+  let totalLinesInCurrentParagraph = 0;
   
   contentLines.forEach((line, index) => {
-    // 计算当前行属于哪个段落
-    while (linesInCurrentParagraph >= getWrappedText(
-      contentParagraphs[currentParagraphIndex],
-      contentFontSize,
-      canvas.width - margin.left - margin.right,
-      false,
-      currentParagraphIndex === 0 ? margin.left : 0
-    ).length) {
+    // Check if we've moved to a new paragraph
+    let paragraphChanged = false;
+    if (currentParagraphIndex === -1 || linesInCurrentParagraph >= totalLinesInCurrentParagraph) {
       currentParagraphIndex++;
       linesInCurrentParagraph = 0;
-      contentY += paragraphSpacing; // 添加段落间距
+      if (currentParagraphIndex > 0) { // Add spacing only between paragraphs
+          contentY += paragraphSpacing;
+      }
+      // Calculate wrapped lines ONCE per paragraph
+      const currentParagraph = contentParagraphs[currentParagraphIndex];
+      const firstLineIndentForCalc = currentParagraphIndex === 0 ? margin.left : 0;
+      currentParagraphWrappedLines = getWrappedText(
+          currentParagraph,
+          contentFontSize,
+          canvas.width - margin.left - margin.right,
+          false,
+          firstLineIndentForCalc
+      );
+      totalLinesInCurrentParagraph = currentParagraphWrappedLines.length;
+      paragraphChanged = true; // Flag that paragraph changed
     }
-    
-    const x = currentParagraphIndex === 0 && linesInCurrentParagraph === 0 
+
+    // This check seems redundant now with the logic above, removing the while loop.
+    // The paragraph change logic handles moving to the next paragraph.
+
+    const isFirstLineOfFirstParagraph = currentParagraphIndex === 0 && linesInCurrentParagraph === 0;
+    const x = isFirstLineOfFirstParagraph
       ? margin.left * 2  // 第一段首行缩进
       : margin.left;     // 其他行正常对齐
+
+    // Determine if it's the last line of the current paragraph using pre-calculated value
+    const isLastLine = linesInCurrentParagraph + 1 === totalLinesInCurrentParagraph;
+
+    // 使用两端对齐绘制文本, passing the new flag and without fontSize
+    drawJustifiedText(
+      line,
+      x,
+      contentY,
+      canvas.width - margin.left - margin.right,
+      // contentFontSize, // Removed fontSize parameter
+      isFirstLineOfFirstParagraph,
+      isLastLine
+    );
     
-    ctx.fillText(line, x, contentY);
     contentY += contentFontSize * lineHeight.content;
     linesInCurrentParagraph++;
   });
