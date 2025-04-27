@@ -16,8 +16,43 @@ const notoSansSC = Noto_Sans_SC({
 const GA_MEASUREMENT_ID = 'G-C7BZCD0EHE';
 
 export const metadata: Metadata = {
-  title: "每日恐怖故事",
-  description: "每天一篇由 AI 生成的短篇恐怖故事",
+  metadataBase: new URL('https://dailythriller.com'),
+  title: {
+    template: '%s | 每日恐怖故事',
+    default: '每日恐怖故事 - AI生成的恐怖小说',
+  },
+  description: '每天一篇由AI生成的原创恐怖故事，带给你不一样的惊悚体验',
+  keywords: ['恐怖故事', 'AI小说', '惊悚', '恐怖文学', '短篇小说'],
+  authors: [{ name: '每日恐怖故事' }],
+  creator: '每日恐怖故事',
+  publisher: '每日恐怖故事',
+  formatDetection: {
+    email: false,
+    address: false,
+    telephone: false,
+  },
+  alternates: {
+    canonical: '/',
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      'max-video-preview': -1,
+      'max-image-preview': 'large',
+      'max-snippet': -1,
+    },
+  },
+  openGraph: {
+    title: '每日恐怖故事',
+    description: '每天一篇由AI生成的原创恐怖故事，带给你不一样的惊悚体验',
+    url: 'https://dailythriller.com',
+    siteName: '每日恐怖故事',
+    locale: 'zh_CN',
+    type: 'website',
+  },
 };
 
 export default function RootLayout({

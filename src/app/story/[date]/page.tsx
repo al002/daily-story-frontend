@@ -68,47 +68,45 @@ async function getStoryByDate(date: string): Promise<Story | null> {
 // This function dynamically generates metadata based on the fetched story
 export async function generateMetadata({
   params,
-}: StoryDetailPageProps): Promise<Metadata | undefined> {
+}: StoryDetailPageProps): Promise<Metadata> {
   const { date } = await params;
-  try {
-    const story = await getStoryByDate(date);
+  const story = await getStoryByDate(date);
 
-    if (!story) {
-      return {
-        title: "故事未找到",
-      };
-    }
-
-    // Format date for title/description if needed
-    const [year, month, day] = story.date.split("-").map(Number);
-    const displayDate = `${year}年${month}月${day}日`;
-
+  if (!story) {
     return {
-      title: `${story.title} - ${displayDate} AI 小说`,
-      description: `阅读 ${displayDate} 由 AI 生成的短篇小说: ${story.content.substring(0, 150)}...`, // Use excerpt for description
-      // Add Open Graph and Twitter card metadata
-      openGraph: {
-        title: `${story.title}`,
-        description: `阅读 ${displayDate} 由 AI 生成的短篇小说...`,
-        type: "article",
-        publishedTime: new Date(Date.UTC(year, month - 1, day)).toISOString(), // Use ISO string for date
-        url: `/story/${story.date}`, // Canonical URL
-        // Add image if you have one associated with stories later
-      },
-      twitter: {
-        card: "summary",
-        title: `${story.title}`,
-        description: `阅读 ${displayDate} 由 AI 生成的短篇小说...`,
-        // creator: '@YourTwitterHandle', // If you have one
-      },
-    };
-  } catch (error) {
-    console.error("Error generating metadata:", error);
-    return {
-      title: "加载故事时出错",
-      description: "无法加载此故事的元数据。",
+      title: '故事未找到',
+      robots: { index: false },
     };
   }
+
+  const [year, month, day] = story.date.split("-").map(Number);
+  const displayDate = `${year}年${month}月${day}日`;
+  const url = `https://dailythriller.com/story/${story.date}`;
+
+  return {
+    title: story.title,
+    description: `${displayDate}的恐怖故事：${story.content.substring(0, 150)}...`,
+    alternates: {
+      canonical: url,
+    },
+    openGraph: {
+      title: story.title,
+      description: `${displayDate}的恐怖故事`,
+      type: 'article',
+      publishedTime: new Date(Date.UTC(year, month - 1, day)).toISOString(),
+      url,
+      siteName: '每日恐怖故事',
+      locale: 'zh_CN',
+    },
+    twitter: {
+      card: 'summary',
+      title: story.title,
+      description: `${displayDate}的恐怖故事`,
+    },
+    other: {
+      'baidu-site-verification': 'your-baidu-verification-code',
+    },
+  };
 }
 
 // --- The Detail Page Component ---
