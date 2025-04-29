@@ -1,7 +1,7 @@
 // 标点符号常量
 const CHINESE_PUNCTUATION = /[，。！？；：、]/;
-const NO_BREAK_BEFORE = /[，。！？；：、》］｝】」』)/]/;
-const NO_BREAK_AFTER = /[《［｛【「『(]/;
+// const NO_BREAK_BEFORE = /[，。！？；：、》］｝】」』)/]/;
+// const NO_BREAK_AFTER = /[《［｛【「『(]/;
 
 export async function generateStoryImage(
   title: string,
@@ -63,7 +63,7 @@ export async function generateStoryImage(
     
     for (let i = 0; i < characters.length; i++) {
       const char = characters[i];
-      const nextChar = characters[i + 1] || '';
+      // const nextChar = characters[i + 1] || '';
       const charWidth = measureText(char);
       
       // 检查是否需要换行
@@ -218,9 +218,8 @@ export async function generateStoryImage(
   let currentParagraphWrappedLines: string[] = [];
   let totalLinesInCurrentParagraph = 0;
   
-  contentLines.forEach((line, index) => {
+  contentLines.forEach((line) => {
     // Check if we've moved to a new paragraph
-    let paragraphChanged = false;
     if (currentParagraphIndex === -1 || linesInCurrentParagraph >= totalLinesInCurrentParagraph) {
       currentParagraphIndex++;
       linesInCurrentParagraph = 0;
@@ -238,7 +237,6 @@ export async function generateStoryImage(
           firstLineIndentForCalc
       );
       totalLinesInCurrentParagraph = currentParagraphWrappedLines.length;
-      paragraphChanged = true; // Flag that paragraph changed
     }
 
     // This check seems redundant now with the logic above, removing the while loop.

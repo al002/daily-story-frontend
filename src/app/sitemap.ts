@@ -1,10 +1,11 @@
+import { Story } from '@/lib/types';
 import { MetadataRoute } from 'next';
 
 async function getAllStoryDates() {
   const apiUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
   const res = await fetch(`${apiUrl}/stories`);
   const data = await res.json();
-  return data.stories.map((story: any) => story.date);
+  return data.stories.map((story: Story) => story.date);
 }
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {

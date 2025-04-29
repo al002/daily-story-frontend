@@ -13,7 +13,6 @@ interface StoryDisplayProps {
 
 export default function StoryDisplay({
   story,
-  isHomepage = false,
 }: StoryDisplayProps) {
   const [isGenerating, setIsGenerating] = useState(false);
 
